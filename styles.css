@@ -305,6 +305,7 @@ select.control {
 .split-input .control { flex: 1; min-width: 0; }
 .split-select { width: 82px !important; flex: 0 0 82px !important; }
 .split-select:disabled { opacity: 0.7; cursor: default; text-align: center; padding: 0 4px; }
+.split-period { width: 88px !important; flex: 0 0 88px !important; padding-left: 8px; padding-right: 24px; }
 #yearsUnit { flex: 0 0 44px !important; width: 44px !important; }
 #monthsUnit { flex: 0 0 48px !important; width: 48px !important; }
 #ratePeriod { flex: 0 0 96px !important; width: 96px !important; }

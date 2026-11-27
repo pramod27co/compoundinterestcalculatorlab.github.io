@@ -221,12 +221,16 @@
             </label>
 
             <label class="field contribution-deposit">
-              <span class="field-label">Annual deposit increase</span>
+              <span class="field-label">Deposit increase</span>
               <div class="split-input">
                 <input id="depositIncrease" class="control" type="number" min="0" step="any" value="0" inputmode="decimal">
                 <select id="depositIncreaseType" class="control split-select">
                   <option value="percent" selected>%</option>
                   <option value="fixed">$</option>
+                </select>
+                <select id="depositIncreasePeriod" class="control split-select split-period">
+                  <option value="yearly" selected>/ yr</option>
+                  <option value="monthly">/ mo</option>
                 </select>
               </div>
             </label>
@@ -257,10 +261,13 @@
             </label>
 
             <label class="field contribution-withdrawal">
-              <span class="field-label">Annual withdrawal increase</span>
-              <div class="input-wrap has-suffix">
+              <span class="field-label">Withdrawal increase</span>
+              <div class="split-input">
                 <input id="withdrawIncrease" class="control" type="number" min="0" step="any" value="0" inputmode="decimal">
-                <span class="affix suffix">%</span>
+                <select id="withdrawIncreasePeriod" class="control split-select split-period">
+                  <option value="yearly" selected>% / yr</option>
+                  <option value="monthly">% / mo</option>
+                </select>
               </div>
             </label>
           </div>

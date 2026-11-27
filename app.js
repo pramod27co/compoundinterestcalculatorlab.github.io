@@ -222,9 +222,11 @@
     $('depositTiming').value = 'end';
     $('depositIncrease').value = 0;
     $('depositIncreaseType').value = 'percent';
+    if ($('depositIncreasePeriod')) $('depositIncreasePeriod').value = 'yearly';
     $('withdrawAmount').value = 0;
     $('withdrawType').value = 'fixed_monthly';
     $('withdrawIncrease').value = 0;
+    if ($('withdrawIncreasePeriod')) $('withdrawIncreasePeriod').value = 'yearly';
     mode = 'compound';
     breakdownView = 'yearly';
     mainView = 'chart';
@@ -256,15 +258,17 @@
     const depositTiming = $('depositTiming').value;
     const depositIncrease = Math.max(0, Number($('depositIncrease').value) || 0);
     const depositIncreaseType = $('depositIncreaseType').value;
+    const depositIncreasePeriod = $('depositIncreasePeriod') ? $('depositIncreasePeriod').value : 'yearly';
 
     const withdrawAmount = Math.max(0, Number($('withdrawAmount').value) || 0);
     const withdrawType = $('withdrawType').value;
     const withdrawIncrease = Math.max(0, Number($('withdrawIncrease').value) || 0);
+    const withdrawIncreasePeriod = $('withdrawIncreasePeriod') ? $('withdrawIncreasePeriod').value : 'yearly';
 
     return {
       principal, annualRate, rateRaw, ratePeriod, compoundsPerYear, totalMonths,
-      ctype, depositAmount, depositFrequency, depositTiming, depositIncrease, depositIncreaseType,
-      withdrawAmount, withdrawType, withdrawIncrease
+      ctype, depositAmount, depositFrequency, depositTiming, depositIncrease, depositIncreaseType, depositIncreasePeriod,
+      withdrawAmount, withdrawType, withdrawIncrease, withdrawIncreasePeriod
     };
   }
 
@@ -299,10 +303,10 @@
     if (freq === 'monthly' || freq === 'quarterly' || freq === 'halfyearly' || freq === 'yearly') {
       const monthStep = { monthly: 1, quarterly: 3, halfyearly: 6, yearly: 12 }[freq];
       for (let m = 0; m < Math.ceil(totalDays / 30.4375) + 1; m += monthStep) {
-        const yearIndex = Math.floor(m / 12);
+        const periodIndex = inp.depositIncreasePeriod === 'monthly' ? m : Math.floor(m / 12);
         const incAmount = inp.depositIncreaseType === 'percent'
-          ? inp.depositAmount * Math.pow(1 + inp.depositIncrease / 100, yearIndex)
-          : inp.depositAmount + inp.depositIncrease * yearIndex;
+          ? inp.depositAmount * Math.pow(1 + inp.depositIncrease / 100, periodIndex)
+          : inp.depositAmount + inp.depositIncrease * periodIndex;
         const monthStart = Math.round(m * 30.4375);
         const monthEnd = Math.round((m + 1) * 30.4375) - 1;
         const day = timing === 'beginning' ? monthStart : monthEnd;
@@ -311,15 +315,17 @@
     } else {
       const stepDays = freq === 'weekly' ? 7 : 14;
       let day = timing === 'beginning' ? 0 : stepDays - 1;
-      let lastYear = -1;
+      let lastPeriod = -1;
       let incAmount = inp.depositAmount;
       while (day < totalDays) {
-        const yearIndex = Math.floor(day / 365);
-        if (yearIndex !== lastYear) {
+        const periodIndex = inp.depositIncreasePeriod === 'monthly'
+          ? Math.floor(day / 30.4375)
+          : Math.floor(day / 365);
+        if (periodIndex !== lastPeriod) {
           incAmount = inp.depositIncreaseType === 'percent'
-            ? inp.depositAmount * Math.pow(1 + inp.depositIncrease / 100, yearIndex)
-            : inp.depositAmount + inp.depositIncrease * yearIndex;
-          lastYear = yearIndex;
+            ? inp.depositAmount * Math.pow(1 + inp.depositIncrease / 100, periodIndex)
+            : inp.depositAmount + inp.depositIncrease * periodIndex;
+          lastPeriod = periodIndex;
         }
         add(day, incAmount);
         day += stepDays;
@@ -340,9 +346,9 @@
     else if (t.startsWith('percent_')) { freq = t.replace('percent_', ''); isPercent = true; }
     else if (t.startsWith('earnings_')) { freq = t.replace('earnings_', ''); isPercent = true; isEarnings = true; }
 
-    const pushMonthEvent = (m, yearIndex) => {
+    const pushMonthEvent = (m, periodIndex) => {
       const base = inp.withdrawAmount;
-      const inc = base * Math.pow(1 + inp.withdrawIncrease / 100, yearIndex);
+      const inc = base * Math.pow(1 + inp.withdrawIncrease / 100, periodIndex);
       const day = Math.round((m + 1) * 30.4375) - 1; // end of period
       if (day >= 0 && day < totalDays) events.push({ day, value: inc, isPercent, isEarnings });
     };
@@ -350,8 +356,8 @@
     const monthStep = { monthly: 1, quarterly: 3, halfyearly: 6, yearly: 12 }[freq] || 1;
     const totalMonths = Math.ceil(totalDays / 30.4375);
     for (let m = 0; m < totalMonths; m += monthStep) {
-      const yearIndex = Math.floor(m / 12);
-      pushMonthEvent(m, yearIndex);
+      const periodIndex = inp.withdrawIncreasePeriod === 'monthly' ? m : Math.floor(m / 12);
+      pushMonthEvent(m, periodIndex);
     }
     return events;
   }
@@ -627,7 +633,10 @@
     const data = isMonthly ? r.monthly : r.yearly;
     const principal = r.inputs.principal;
 
-    const labels = data.map((d, i) => (i === 0 ? 'Start' : d.label));
+    const labels = data.map((d, i) => {
+      if (i === 0) return '0';
+      return isMonthly ? d.label : String(i);
+    });
     const initialBal = data.map(() => principal);
     const deposits = data.map((d) => Math.max(0, d.totalDeposits - principal));
     const interest = data.map((d) => d.accruedInterest);
@@ -750,7 +759,12 @@
             boxHeight: 10,
             usePointStyle: true,
             callbacks: {
-              title: (items) => (items.length ? items[0].label : ''),
+              title: (items) => {
+                if (!items.length) return '';
+                const l = items[0].label;
+                if (isMonthly) return l === '0' ? 'Start' : l;
+                return l === '0' ? 'Start' : `Year ${l}`;
+              },
               label: (c) => ` ${c.dataset.label}: ${money(c.parsed.y)}`,
             },
           },
@@ -884,8 +898,8 @@
     ['c', 'currency'], ['p', 'principal'], ['r', 'rate'], ['rp', 'ratePeriod'],
     ['cf', 'compoundFrequency'], ['cc', 'customCompound'], ['y', 'years'], ['m', 'months'],
     ['ct', 'contributionType'], ['da', 'depositAmount'], ['df', 'depositFrequency'],
-    ['dt', 'depositTiming'], ['di', 'depositIncrease'], ['dit', 'depositIncreaseType'],
-    ['wa', 'withdrawAmount'], ['wt', 'withdrawType'], ['wi', 'withdrawIncrease'],
+    ['dt', 'depositTiming'], ['di', 'depositIncrease'], ['dit', 'depositIncreaseType'], ['dip', 'depositIncreasePeriod'],
+    ['wa', 'withdrawAmount'], ['wt', 'withdrawType'], ['wi', 'withdrawIncrease'], ['wip', 'withdrawIncreasePeriod'],
   ];
   const VALID_MODES = ['compound', 'daily', 'forex', 'simple'];
   const VALID_VIEWS = ['table', 'chart', 'summary'];
