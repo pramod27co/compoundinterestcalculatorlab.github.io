@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pramod27co.github.io/Compound-interest-calculator-lab/sitemap.xml
