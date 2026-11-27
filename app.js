@@ -648,7 +648,8 @@
     const barRed = isDark ? '#f87171' : '#e06666';
     const lineInk = isDark ? '#f8fafc' : '#14231a';
 
-    const tickStep = isMonthly ? Math.max(1, Math.ceil(data.length / 10)) : 1;
+    const tickStep = Math.max(1, Math.ceil(data.length / 12));
+    const dense = data.length > 60;
 
     const config = {
       data: {
@@ -705,8 +706,8 @@
             borderWidth: 2,
             tension: 0.25,
             fill: false,
-            pointRadius: isMonthly ? 0 : 3.5,
-            pointHoverRadius: 5,
+            pointRadius: dense ? 0 : 3.5,
+            pointHoverRadius: dense ? 4 : 5,
             pointBackgroundColor: '#ffffff',
             pointBorderColor: lineInk,
             pointBorderWidth: 1.6,
@@ -723,6 +724,7 @@
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
+        datasets: { bar: { barPercentage: dense ? 0.98 : 0.72, categoryPercentage: dense ? 0.98 : 0.82 } },
         plugins: {
           legend: {
             position: 'bottom',

@@ -25,24 +25,28 @@ Runs entirely in the browser — no backend, no build step.
 
 ## ✅ Placeholders — already replaced (2026-11-27)
 
-- GitHub username: **`pramod27co`** → site URL is `https://pramod27co.github.io/Compound-interest-calculator-lab/`
+- GitHub username: **`compoundinterestcalculatorlab`** → site URL is `https://compoundinterestcalculatorlab.github.io/`
   (canonical, OG, Twitter, JSON-LD in `index.html` + `privacy.html` + `disclaimer.html` + `about.html`, plus `robots.txt` and `sitemap.xml`)
 - Contact email: **`pramodandbusiness@gmail.com`** (in `about.html`)
 
-If you rename the repo or change accounts, search the folder for `pramod27co` and update every
-occurrence to keep the canonical URL, sitemap and social cards pointing at the right address.
+The repo must be named **`compoundinterestcalculatorlab.github.io`** (user-site convention — that
+name publishes to the root URL, with no path segment). If you ever rename the account or repo,
+search the folder for `compoundinterestcalculatorlab` and update every occurrence to keep the
+canonical URL, sitemap and social cards pointing at the right address.
 
 ---
 
 ## Deploy to GitHub Pages (from a phone or desktop)
 
-1. Create a free account at [github.com](https://github.com).
-2. **New repository** → name it `Compound-interest-calculator-lab` → Public → Create repository.
+1. Create a free account at [github.com](https://github.com) with username
+   **`compoundinterestcalculatorlab`** (or rename an existing account:
+   Settings → Account → Change username).
+2. **New repository** → name it `compoundinterestcalculatorlab.github.io` → Public → Create repository.
 3. On the repo page: **Add file → Upload files** → drag in every file from this folder
    (every file goes to the repo root — the project is intentionally flat, so a phone can
    multi-select all files in one upload) → **Commit changes**.
 4. **Settings → Pages** → Source: *Deploy from a branch* → Branch: `main`, folder: `/root` → **Save**.
-5. Wait ~1 minute, then open `https://<your-username>.github.io/Compound-interest-calculator-lab/`.
+5. Wait ~1 minute, then open `https://compoundinterestcalculatorlab.github.io/`.
 
 ### Updating the site later
 Re-upload only the files you changed (step 3). GitHub Pages redeploys automatically.
