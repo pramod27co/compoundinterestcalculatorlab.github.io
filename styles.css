@@ -119,9 +119,9 @@ button { cursor: pointer; }
 [data-theme="dark"] .icon-sun { display: none; }
 [data-theme="dark"] .icon-moon { display: block; }
 
-.main-content { padding: 20px 0 32px; }
-.hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin: 0 0 16px; text-align: left; }
-.hero > :first-child { flex: 1; }
+.main-content { padding: 24px 0 40px; }
+.hero { max-width: 980px; margin: 0 auto 20px; text-align: left; }
+.hero > :first-child { max-width: 720px; }
 .eyebrow, .panel-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -159,9 +159,11 @@ button { cursor: pointer; }
 
 .calculator-shell {
   display: grid;
-  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+  grid-template-columns: 1fr;
   gap: 16px;
   align-items: start;
+  max-width: 980px;
+  margin: 0 auto;
 }
 .panel {
   background: var(--bg-elev-solid);
@@ -169,8 +171,8 @@ button { cursor: pointer; }
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
-.form-panel { padding: 18px; position: sticky; top: 64px; }
-.results-panel { padding: 18px; min-width: 0; }
+.form-panel { padding: 20px; }
+.results-panel { padding: 20px; min-width: 0; }
 .panel-head {
   display: flex;
   align-items: flex-start;
@@ -518,6 +520,9 @@ select.control {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-top: 16px;
+  max-width: 980px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .info-card {
   display: flex;
